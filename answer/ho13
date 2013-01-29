@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<installation srtype="ext">
+ <primary-disk>sda</primary-disk>
+ <keymap>jp106</keymap>
+ <root-password>password</root-password>
+ <source type="url">http://172.16.1.1/dist/xs602/</source>
+ <post-install-script type="url">http://172.16.1.1/scripts/post-handson.sh</post-install-script>
+ <admin-interface name="eth0" proto="static">
+   <ip>172.16.1.13</ip>
+   <subnet-mask>255.255.0.0</subnet-mask>
+   <gateway>172.16.1.1</gateway>
+ </admin-interface>
+ <hostname>xs13</hostname>
+ <nameserver>172.16.1.1</nameserver>
+ <ntp-servers>172.16.1.1</ntp-servers>
+ <timezone>Asia/Tokyo</timezone>
+ <driver-source type="url">http://172.16.1.1/dist/XS602E001-CTX132823/</driver-source>
+ <driver-source type="url">http://172.16.1.1/dist/XS602E002-CTX132824/</driver-source>
+ <driver-source type="url">http://172.16.1.1/dist/XS602E003-CTX133166/</driver-source>
+ <driver-source type="url">http://172.16.1.1/dist/XS602E004-CTX133174/</driver-source>
+</installation>

@@ -1,0 +1,85 @@
+# Installation
+install
+url --url http://172.16.1.1/dist/centos
+text
+reboot
+# Networking
+network --onboot=yes --device=eth0 --bootproto=dhcp --noipv6
+# Disk
+clearpart --all --initlabel --drives=sda
+part swap --fstype=swap --size=96
+part / --fstype=ext4 --size=1 --grow
+# Security
+rootpw karl094.
+firewall --disabled
+auth --enableshadow --passalgo=sha512
+selinux --disabled
+# Misc
+lang en_US
+keyboard jp106
+services --enabled=ssh --disabled=iptables,netfs,rdisc
+timezone Asia/Tokyo
+bootloader --location=mbr --driveorder=sda --append="crashkernel=auto consoleblank=0 rhgb"
+
+%packages --excludedocs --nobase --instLangs=en
+-acl
+-aic94xx-firmware
+-atmel-firmware
+-attr
+-audit
+-b43-openfwwf
+-bfa-firmware
+-checkpolicy
+-cronie
+-cronie-anacron
+-dbus-glib
+-device-mapper-multipath
+-diffutils
+-dracut-network
+-efibootmgr
+-fcoe-utils
+-iscsi-initiator-utils
+-ivtv-firmware
+-iwl100-firmware
+-iwl1000-firmware
+-iwl2100-firmware
+-iwl2200-firmware
+-iwl3945-firmware
+-iwl4965-firmware
+-iwl5000-firmware
+-iwl5150-firmware
+-iwl6000-firmware
+-iwl6000g2a-firmware
+-iwl6000g2b-firmware
+-iwl6050-firmware
+-libcgroup
+-libedit
+-libselinux-python
+-libsemanage
+-m4
+-nfs-utils
+-nfs-utils-lib
+-openssh
+-openssh-clients
+openssh-server
+-pciutils-libs
+-perl
+-policycoreutils
+-postfix
+-rsyslog
+-selinux-policy
+-selinux-policy-targeted
+-tcp_wrappers-libs
+-ustr
+-xfsprogs
+-xorg-x11-drv-ati-firmware
+
+%post --log=/root/ks-post.log
+rpm -e $(rpm -qa \*firmware | grep -v kernel)
+yum -y remove authconfig dracut dracut-kernel iptables-ipv6 newt-python newt system-config-firewall-base
+sed -i -e '/ACTIVE_CONSOLES/s/\-6/\-2/' /etc/sysconfig/init
+userdel -f ftp
+userdel -f gopher
+userdel -f games
+userdel -f lp
+userdel -f uucp

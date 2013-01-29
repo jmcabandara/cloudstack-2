@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<installation>
+  <bootloader>extlinux</bootloader>
+  <primary-disk>sda</primary-disk>
+  <keymap>jp106</keymap>
+  <hostname>xs61.cloud.local</hostname>
+  <root-password>karl094.</root-password>
+  <source type="url">http://172.16.1.1/dist/xs61/</source>
+  <script stage="filesystem-populated" type="url">http://172.16.1.1/scripts/post-xs61.sh</script>
+  <admin-interface name="eth0" proto="static">
+    <ip>172.16.1.61</ip>
+    <subnet-mask>255.255.0.0</subnet-mask>
+    <gateway>172.16.254.254</gateway>
+  </admin-interface>
+  <nameserver>172.16.1.1</nameserver>
+  <timezone>Asia/Tokyo</timezone>
+  <time-config-method>ntp</time-config-method>
+  <ntp-server>172.16.1.1</ntp-server>
+</installation>

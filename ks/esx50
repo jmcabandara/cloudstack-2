@@ -1,0 +1,82 @@
+accepteula
+install --firstdisk --overwritevmfs
+rootpw karl094.
+network --bootproto=static --ip=172.16.1.9 --netmask=255.255.128.0 --gateway=172.16.1.254 --nameserver=172.16.1.1 --hostname=esx50.cloud.local --addvmportgroup=1
+keyboard Japanese
+reboot
+
+%pre --interpreter=busybox
+
+%firstboot --interpreter=busybox
+
+# enable & start remote ESXi Shell (SSH)
+vim-cmd hostsvc/enable_ssh
+vim-cmd hostsvc/start_ssh
+ 
+# enable & start ESXi Shell (TSM)
+vim-cmd hostsvc/enable_esx_shell
+vim-cmd hostsvc/start_esx_shell
+ 
+# supress ESXi Shell shell warning
+esxcli system settings advanced set -o /UserVars/SuppressShellWarning -i 1
+esxcli system settings advanced set -o /UserVars/ESXiShellTimeOut -i 1
+ 
+# rename local datastore to something more meaningful
+vim-cmd hostsvc/datastore/rename datastore1 "$(hostname -s)-local-storage-1"
+ 
+# assign license
+#vim-cmd vimsvc/license --set 51013-F2LDP-J8V48-0J2U6-8TMPJ
+
+esxcfg-vswitch -a cloud-public
+esxcfg-vswitch -a cloud-storage
+esxcfg-vswitch -a cloud-guest
+esxcfg-vswitch -a cloud-guest2
+
+# cloud-mgmt
+esxcli network vswitch standard uplink add --uplink-name vmnic1 --vswitch-name vSwitch0
+esxcli network vswitch standard set --mtu 9000 --cdp-status both --vswitch-name vSwitch0
+esxcli network vswitch standard policy failover set --active-uplinks vmnic0,vmnic1 --vswitch-name vSwitch0
+esxcli network vswitch standard policy failover set --failback no --failure-detection beacon --load-balancing portid --notify-switches yes --vswitch-name vSwitch0
+
+# cloud-public
+#esxcli network vswitch standard add --ports 4096 --vswitch-name cloud-public
+esxcli network vswitch standard uplink add --uplink-name vmnic2 --vswitch-name cloud-public
+esxcli network vswitch standard uplink add --uplink-name vmnic3 --vswitch-name cloud-public
+esxcli network vswitch standard set --mtu 9000 --cdp-status listen --vswitch-name cloud-public
+esxcli network vswitch standard policy failover set --active-uplinks vmnic2,vmnic3 --vswitch-name cloud-public
+esxcli network vswitch standard policy failover set --failback no --failure-detection link --load-balancing iphash --notify-switches yes --vswitch-name cloud-public
+
+# cloud-storage
+#esxcli network vswitch standard add --ports 4096 --vswitch-name cloud-storage
+esxcli network vswitch standard uplink add --uplink-name vmnic4 --vswitch-name cloud-storage
+esxcli network vswitch standard uplink add --uplink-name vmnic5 --vswitch-name cloud-storage
+esxcli network vswitch standard set --mtu 9000 --cdp-status listen --vswitch-name cloud-storage
+esxcli network vswitch standard policy failover set --active-uplinks vmnic4,vmnic5 --vswitch-name cloud-storage
+esxcli network vswitch standard policy failover set --failback no --failure-detection beacon --load-balancing portid --notify-switches yes --vswitch-name cloud-storage
+esxcli network vswitch standard portgroup add --portgroup-name PrimaryStorage --vswitch-name cloud-storage
+esxcli network ip interface add --interface-name vmk1 --mtu 9000 --portgroup-name PrimaryStorage
+esxcli network ip interface ipv4 set --interface-name vmk1 --ipv4 172.24.0.9 --netmask 255.255.128.0 --type static
+
+# cloud-guest
+#esxcli network vswitch standard add --ports 4096 --vswitch-name cloud-guest
+esxcli network vswitch standard uplink add --uplink-name vmnic6 --vswitch-name cloud-guest
+esxcli network vswitch standard uplink add --uplink-name vmnic7 --vswitch-name cloud-guest
+esxcli network vswitch standard set --mtu 9000 --cdp-status listen --vswitch-name cloud-guest
+esxcli network vswitch standard policy failover set --active-uplinks vmnic6,vmnic7 --vswitch-name cloud-guest
+esxcli network vswitch standard policy failover set --failback no --failure-detection link --load-balancing iphash --notify-switches yes --vswitch-name cloud-guest
+
+# cloud-guest2
+#esxcli network vswitch standard add --ports 4096 --vswitch-name cloud-guest2
+esxcli network vswitch standard uplink add --uplink-name vmnic8 --vswitch-name cloud-guest2
+esxcli network vswitch standard uplink add --uplink-name vmnic9 --vswitch-name cloud-guest2
+esxcli network vswitch standard set --mtu 9000 --cdp-status listen --vswitch-name cloud-guest2
+esxcli network vswitch standard policy failover set --active-uplinks vmnic8,vmnic9 --vswitch-name cloud-guest2
+esxcli network vswitch standard policy failover set --failback no --failure-detection link --load-balancing iphash --notify-switches yes --vswitch-name cloud-guest2
+
+vim-cmd hostsvc/vmotion/vnic_set vmk0
+
+# NTP
+echo broadcastclient > /etc/ntp.conf
+/sbin/chkconfig ntpd on 
+
+#reboot

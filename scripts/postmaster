@@ -1,0 +1,110 @@
+#!/bin/bash
+#
+# chkconfig: 35 99
+# description: do post-installation setup
+
+### BEGIN INIT INFO
+# Provides: postmaster
+# Default-Start:  345
+# Short-Description: do post-installation setup
+# Description: do post-installation setup for XS master
+### END INIT INFO
+
+#
+# Variables
+#
+_DEBUG='logger -p user.info -t postinstall -- '
+_host=$(hostname)
+
+$_DEBUG starting $0 $*
+
+#
+# Create NIC bondings
+#
+if [ -z "$(xe network-list name-label=cloud-mgmt --minimal)" ]; then
+  $_DEBUG creating cloud-mgmt
+  _bond=$(xe network-create name-label=cloud-mgmt)
+  _pif1=$(xe pif-list host-name-label=$_host device=eth0 --minimal)
+  _pif2=$(xe pif-list host-name-label=$_host device=eth1 --minimal)
+  xe bond-create network-uuid=$_bond pif-uuids=$_pif1,$_pif2 mode=active-backup
+fi
+
+if [ -z "$(xe network-list name-label=cloud-public --minimal)" ]; then
+  $_DEBUG creating cloud-public
+  _bond=$(xe network-create name-label=cloud-public)
+  _pif1=$(xe pif-list host-name-label=$_host device=eth2 --minimal)
+  _pif2=$(xe pif-list host-name-label=$_host device=eth3 --minimal)
+  xe bond-create network-uuid=$_bond pif-uuids=$_pif1,$_pif2 mode=balance-slb
+fi
+
+if [ -z "$(xe network-list name-label=cloud-storage --minimal)" ]; then
+  $_DEBUG creating cloud-storage
+  _ntwk=$(xe network-create name-label=cloud-storage MTU=9000)
+  _pif1=$(xe pif-list host-name-label=$_host device=eth4 --minimal)
+  _pif2=$(xe pif-list host-name-label=$_host device=eth5 --minimal)
+  _bond=$(xe bond-create network-uuid=$_ntwk pif-uuids=$_pif1,$_pif2 mode=balance-slb)
+  _pif3=$(xe network-list name-label=cloud-storage params=PIF-uuids --minimal)
+  xe pif-reconfigure-ip mode=static IP=172.24.0.$(grep IPADDR /etc/sysconfig/network-scripts/ifcfg-xapi1 | cut -d. -f4) netmask=255.255.128.0 uuid=$_pif3
+  xe pif-param-set disallow-unplug=true uuid=$_pif3
+  xe pif-param-set other-config:ManagementPurpose="Storage" uuid=$_pif3
+fi
+
+if [ -z "$(xe network-list name-label=cloud-guest --minimal)" ]; then
+  $_DEBUG creating cloud-guest
+  _bond=$(xe network-create name-label=cloud-guest)
+  _pif1=$(xe pif-list host-name-label=$_host device=eth6 --minimal)
+  _pif2=$(xe pif-list host-name-label=$_host device=eth7 --minimal)
+  xe bond-create network-uuid=$_bond pif-uuids=$_pif1,$_pif2 mode=balance-slb
+fi
+
+if [ -z "$(xe network-list name-label=cloud-guest2 --minimal)" ]; then
+  $_DEBUG creating cloud-guest2
+  _bond=$(xe network-create name-label=cloud-guest2)
+  _pif1=$(xe pif-list host-name-label=$_host device=eth8 --minimal)
+  _pif2=$(xe pif-list host-name-label=$_host device=eth9 --minimal)
+  xe bond-create network-uuid=$_bond pif-uuids=$_pif1,$_pif2 mode=balance-slb
+fi
+
+#
+# Apply hotfixes
+#
+_TMP=/tmp
+
+if [ ! -e $_TMP/patches_downloaded ]; then
+  $_DEBUG downloading patches
+  wget -q -nd -P $_TMP ftp://172.16.1.1/XS$(xe host-list name-label=`uname -n` params=software-version --minimal | cut -d\; -f3 | tr -d [:alpha:][:blank:][:punct:])E/*.xsupdate
+  touch $_TMP/patches_downloaded
+fi
+
+touch $_TMP/patches_applying
+
+_hostuuid=$(xe host-list name-label=$_host --minimal)
+for xsupdate in $_TMP/*.xsupdate; do
+  $_DEBUG uploading ${xsupdate##*/}
+  _patchuuid=$(xe patch-upload file-name=$xsupdate)
+  mv $xsupdate ${xsupdate}d
+  if [ -z "$_patchuuid" ]; then
+    $_DEBUG skipping ${xsupdate##*/}
+    continue;
+  fi
+  $_DEBUG processing "$(xe patch-list uuid=$_patchuuid params=name-label --minimal), $(xe patch-list uuid=$_patchuuid params=name-description --minimal)"
+  $_DEBUG xe patch-apply host-uuid=$_hostuuid uuid=$_patchuuid
+  xe patch-apply host-uuid=$_hostuuid uuid=$_patchuuid
+  xe patch-list uuid=$_patchuuid >> $_TMP/patches_applying
+  _patchaction=$(xe patch-list uuid=$_patchuuid params=after-apply-guidance --minimal)
+  $_DEBUG doing $_patchaction
+  if [ "$_patchaction" == "restartXAPI" ]; then
+    xe-toolstack-restart
+    sleep 60
+  elif [ "$_patchaction" == "restartHost" ]; then
+    reboot
+    exit
+  fi
+done
+
+mv $_TMP/patches_applying $_TMP/patches_applied
+$_DEBUG all patches have been applied
+
+rm -f /etc/rc3.d/S99zzpostmaster
+
+exit 0
