@@ -44,7 +44,7 @@ if [ -z "$(xe network-list name-label=cloud-storage --minimal)" ]; then
   _pif2=$(xe pif-list host-name-label=$_host device=eth5 --minimal)
   _bond=$(xe bond-create network-uuid=$_ntwk pif-uuids=$_pif1,$_pif2 mode=balance-slb)
   _pif3=$(xe network-list name-label=cloud-storage params=PIF-uuids --minimal)
-  xe pif-reconfigure-ip mode=static IP=172.24.0.$(grep IPADDR /etc/sysconfig/network-scripts/ifcfg-xapi1 | cut -d. -f4) netmask=255.255.128.0 uuid=$_pif3
+  xe pif-reconfigure-ip mode=static IP=172.24.1.$(grep IPADDR /etc/sysconfig/network-scripts/ifcfg-xapi1 | cut -d. -f4) netmask=255.255.128.0 uuid=$_pif3
   xe pif-param-set disallow-unplug=true uuid=$_pif3
   xe pif-param-set other-config:ManagementPurpose="Storage" uuid=$_pif3
 fi

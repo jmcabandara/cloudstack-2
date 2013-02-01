@@ -22,7 +22,7 @@ $_DEBUG starting $0 $*
 # Configure IP address for storage network
 #
 if [ -z "$(xe pif-list device=eth4 params=IP --minimal)" ]; then
-  xe pif-reconfigure-ip mode=static IP=172.24.0.$(grep IPADDR /etc/sysconfig/network-scripts/ifcfg-xenbr0 | cut -d. -f4) netmask=255.255.128.0 uuid=$(xe pif-list device=eth4 --minimal)
+  xe pif-reconfigure-ip mode=static IP=172.24.1.$(grep IPADDR /etc/sysconfig/network-scripts/ifcfg-xenbr0 | cut -d. -f4) netmask=255.255.128.0 uuid=$(xe pif-list device=eth4 --minimal)
 #  xe pif-param-set disallow-unplug=true uuid=$_pif3
 #  xe pif-param-set other-config:ManagementPurpose="Storage" uuid=$_pif3
 fi
