@@ -23,7 +23,7 @@ clearpart --all --initlabel --drives=sda
 autopart
 # Security
 rootpw karl094.
-firewall --enabled --ssh
+firewall --enabled --ssh --port=etp:tcp,16509:tcp,5900:6100:tcp,49152:49216:tcp
 authconfig --enableshadow --passalgo=sha512
 selinux --permissive
 # Misc
@@ -230,8 +230,6 @@ MASTER=bond4
 SLAVE=yes
 _IFCFG_ETH9_
 #
-echo virsh net-destroy default >> /root/todo.sh
-echo virsh net-undefine default >> /root/todo.sh
 
 # KVM
 sed -i -e '/vnc_listen = /s/^# //' /etc/libvirt/qemu.conf
