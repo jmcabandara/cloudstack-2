@@ -3,6 +3,8 @@ createUser&username=takashis&account=admin&domainid=<ROOT>&email=takashi.sugano@
 #1
 registerUserKeys&id=<takashis>
 #
+createSSHKeyPair&name=cloudkey&domainid=<ROOT>&account=admin
+#
 disableUser&id=<admin>
 #2
 createDomain&name=Apache.org&parentdomainid=<ROOT>
