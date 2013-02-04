@@ -51,7 +51,7 @@ while line = gets
     when /^start/
       skip = false
     when /^\d+/
-      puts "Sleeping #{control} sec(s)" if $DEBUG
+      puts "Sleeping #{control} sec(s)"
       sleep control.to_i unless skip
     end
     next
@@ -61,7 +61,7 @@ while line = gets
 
   cmd = line.split(/&/).shift
   puts "Using API: #{cmd}" if $DEBUG
-  line.gsub!(/&([A-Za-z]+)=<(.*)>/) do |matched|
+  line.gsub!(/&([A-Za-z]+)=<([^&<>]+)>/) do |matched|
     puts "Substituting #{matched}" if $DEBUG
     value = $2
     case param = $1
@@ -113,6 +113,8 @@ while line = gets
     uri = URI.parse("http://172.16.1.2:8096/client/api?command=#{line}&response=json")
   end
   p uri.request_uri
-  response = Net::HTTP.new(uri.host, uri.port).get(uri.request_uri)
-  jj JSON.parse(response.body)
+  unless $DEBUG
+    response = Net::HTTP.new(uri.host, uri.port).get(uri.request_uri)
+    jj JSON.parse(response.body)
+  end
 end
