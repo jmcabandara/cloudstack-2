@@ -35,7 +35,7 @@ _TMP=/tmp
 if [ ! -e $_TMP/patches_downloaded ]; then
   $_DEBUG downloading patches
   wget -q -nd -P $_TMP ftp://172.16.1.1/XS$(xe host-list name-label=`uname -n` params=software-version --minimal | cut -d\; -f3 | tr -d [:alpha:][:blank:][:punct:])E/*.xsupdate
-  touch $_TMP/patches_downloaded
+  ls -l $_TMP/*.xsupdate > $_TMP/patches_downloaded
 fi
 
 touch $_TMP/patches_applying
