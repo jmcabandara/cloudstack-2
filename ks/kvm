@@ -1,24 +1,23 @@
 # Installation
 install
-url --url http://172.16.1.1/dist/cent62
-repo --name=local --baseurl=http://172.16.1.1/dist/RPMS
-#repo --name=official_os --baseurl=http://ftp.iij.ad.jp/pub/linux/centos/6/os/x86_64/
-#repo --name=official_up --baseurl=http://ftp.iij.ad.jp/pub/linux/centos/6/updates/x86_64/
-repo --name=vault_os --baseurl=http://vault.centos.org/6.2/os/x86_64/
-repo --name=vault_up --baseurl=http://vault.centos.org/6.2/updates/x86_64/
+url --url=http://172.16.1.1/dist/cent62
+repo --name=local1 --baseurl=http://172.16.1.1/dist/cent62
+repo --name=local2 --baseurl=http://172.16.1.1/dist/RPMS
+#repo --name=official --baseurl=http://ftp.iij.ad.jp/pub/linux/centos/6/os/x86_64/
+repo --name=vault --baseurl=http://vault.centos.org/6.2/os/x86_64/
 text
 reboot
 # Networking
-network --onboot=yes --device=eth0 --bootproto=dhcp --hostname=kvm.cloud.local --noipv6 --mtu=9000
-network --onboot=yes --device=eth1 --bootproto=static --noipv6 --mtu=9000
-network --onboot=yes --device=eth2 --bootproto=static --noipv6 --mtu=9000
-network --onboot=yes --device=eth3 --bootproto=static --noipv6 --mtu=9000
+network --onboot=yes --device=eth0 --bootproto=dhcp --hostname=kvm.cloud.local --noipv6
+network --onboot=yes --device=eth1 --bootproto=static --noipv6
+network --onboot=yes --device=eth2 --bootproto=static --noipv6
+network --onboot=yes --device=eth3 --bootproto=static --noipv6
 network --onboot=yes --device=eth4 --bootproto=static --noipv6 --mtu=9000
 network --onboot=yes --device=eth5 --bootproto=static --noipv6 --mtu=9000
-network --onboot=yes --device=eth6 --bootproto=static --noipv6 --mtu=9000
-network --onboot=yes --device=eth7 --bootproto=static --noipv6 --mtu=9000
-network --onboot=yes --device=eth8 --bootproto=static --noipv6 --mtu=9000
-network --onboot=yes --device=eth9 --bootproto=static --noipv6 --mtu=9000
+network --onboot=yes --device=eth6 --bootproto=static --noipv6
+network --onboot=yes --device=eth7 --bootproto=static --noipv6
+network --onboot=yes --device=eth8 --bootproto=static --noipv6
+network --onboot=yes --device=eth9 --bootproto=static --noipv6
 # Disk
 clearpart --all --initlabel --drives=sda
 autopart
@@ -43,8 +42,8 @@ bootloader --location=mbr --driveorder=sda --append="crashkernel=auto consolebla
 bridge-utils
 libguestfs-mount
 libguestfs-tools
-ocfs2-kmod
-ocfs2-tools
+#ocfs2-kmod
+#ocfs2-tools
 qemu-kvm-tools
 virt-v2v
 
@@ -80,9 +79,8 @@ TYPE=Bridge
 ONBOOT=yes
 BOOTPROTO=none
 IPADDR=172.16.1.5
-NETMASK=255.255.0.0
+NETMASK=255.255.128.0
 GATEWAY=172.16.1.254
-MTU=9000
 USERCTL=no
 _IFCFG_CLOUD_MGMT_
 #
@@ -92,7 +90,6 @@ TYPE=Ethernet
 ONBOOT=yes
 BOOTPROTO=static
 BRIDGE=cloud-mgmt
-MTU=9000
 USERCTL=no
 BONDING_OPTS="mode=1 miimon=100 updelay=5000"
 _IFCFG_BOND0_
@@ -114,7 +111,6 @@ DEVICE=cloud-public
 TYPE=Bridge
 ONBOOT=yes
 BOOTPROTO=none
-MTU=9000
 USERCTL=no
 _IFCFG_CLOUD_PUBLIC_
 #
@@ -124,7 +120,6 @@ TYPE=Ethernet
 ONBOOT=yes
 BOOTPROTO=static
 BRIDGE=cloud-public
-MTU=9000
 USERCTL=no
 BONDING_OPTS="mode=1 miimon=100 updelay=5000"
 _IFCFG_BOND1_
@@ -146,8 +141,8 @@ DEVICE=cloud-storage
 TYPE=Bridge
 ONBOOT=yes
 BOOTPROTO=none
-IPADDR=172.24.0.5
-NETMASK=255.255.0.0
+IPADDR=172.24.1.5
+NETMASK=255.255.128.0
 MTU=9000
 USERCTL=no
 _IFCFG_CLOUD_STORAGE_
@@ -180,7 +175,6 @@ DEVICE=cloud-guest
 TYPE=Bridge
 ONBOOT=yes
 BOOTPROTO=none
-MTU=9000
 USERCTL=no
 _IFCFG_CLOUD_GUEST_
 #
@@ -190,7 +184,6 @@ TYPE=Ethernet
 ONBOOT=yes
 BOOTPROTO=static
 BRIDGE=cloud-guest
-MTU=9000
 USERCTL=no
 BONDING_OPTS="mode=1 miimon=100 updelay=5000"
 _IFCFG_BOND3_
@@ -212,7 +205,6 @@ DEVICE=cloud-guest2
 TYPE=Bridge
 ONBOOT=yes
 BOOTPROTO=none
-MTU=9000
 USERCTL=no
 _IFCFG_CLOUD_GUEST2_
 #
@@ -222,7 +214,6 @@ TYPE=Ethernet
 ONBOOT=yes
 BOOTPROTO=static
 BRIDGE=cloud-guest2
-MTU=9000
 USERCTL=no
 BONDING_OPTS="mode=1 miimon=100 updelay=5000"
 _IFCFG_BOND4_
@@ -244,6 +235,10 @@ echo virsh net-undefine default >> /root/todo.sh
 
 # KVM
 sed -i -e '/vnc_listen = /s/^# //' /etc/libvirt/qemu.conf
+
+#LIBVIRT
+sed -i -e '/^#listen_tls/s/^#//' -e '/^#listen_tcp/s/^#//' -e '/^#tcp_port/s/^#//' -e '/^#mdns_adv/s/^#//' -e '/^#auth_tcp = /a auth_tcp = "none"' /etc/libvirt/libvirtd.conf
+sed -i -e '/^#LIBVIRTD_ARGS/s/^#//' /etc/sysconfig/libvirtd
 
 # MISC
 sed -i -e '/^-A FORWARD -j REJECT/i -A FORWARD -m physdev --physdev-is-bridged -j ACCEPT' /etc/sysconfig/iptables
