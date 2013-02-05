@@ -79,6 +79,8 @@ while line = gets
       sql = "select uuid from physical_network where name = '#{value}'"
     when /id/i
       case cmd
+      when /account/i
+        sql = "select uuid from account where name = '#{value}'"
       when /user/i
         sql = "select uuid from user where username = '#{value}'"
       when /zone/i
