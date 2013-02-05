@@ -69,7 +69,7 @@ updatePhysicalNetwork&id=<cloud-guest>&vlan=1000-1999
 #2
 addCluster&zoneid=<z1>&podid=<p1>&clustername=c1&clustertype=CloudManaged&hypervisor=XenServer
 #
-addHost&zoneid=<z1>&podid=<p1>&clusterid=<c1>&clustertype=CloudManaged&hypervisor=XenServer&url=http://172.16.1.60&username=root&password=karl094.&hosttag=
+addHost&zoneid=<z1>&podid=<p1>&clusterid=<c1>&clustertype=CloudManaged&hypervisor=XenServer&url=http://172.16.1.60&username=root&password=karl094.
 #30
 createStoragePool&zoneid=<z1>&podid=<p1>&clusterid=<c1>&name=s1&url=nfs://172.24.1.2/export/primary/x
 #10
