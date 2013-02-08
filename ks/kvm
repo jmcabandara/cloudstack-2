@@ -1,8 +1,8 @@
 # Installation
 install
 url --url=http://172.16.1.1/dist/cent62
-repo --name=local1 --baseurl=http://172.16.1.1/dist/cent62
-repo --name=local2 --baseurl=http://172.16.1.1/dist/RPMS
+repo --name=local1 --baseurl=http://172.16.1.1/dist/cent62/
+repo --name=local2 --baseurl=http://172.16.1.1/dist/RPMS/
 #repo --name=official --baseurl=http://ftp.iij.ad.jp/pub/linux/centos/6/os/x86_64/
 repo --name=vault --baseurl=http://vault.centos.org/6.2/os/x86_64/
 text
@@ -42,10 +42,10 @@ bootloader --location=mbr --driveorder=sda --append="crashkernel=auto consolebla
 bridge-utils
 libguestfs-mount
 libguestfs-tools
-#ocfs2-kmod
-#ocfs2-tools
 qemu-kvm-tools
 virt-v2v
+
+xfsprogs
 
 avahi
 bind-utils
@@ -230,6 +230,12 @@ MASTER=bond4
 SLAVE=yes
 _IFCFG_ETH9_
 #
+
+# GLUSTERFS
+yum install -y glusterfs
+yum install -y glusterfs-fuse
+yum install -y glusterfs-geo-replication
+yum install -y glusterfs-sever
 
 # KVM
 sed -i -e '/vnc_listen = /s/^# //' /etc/libvirt/qemu.conf
