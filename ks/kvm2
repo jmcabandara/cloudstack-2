@@ -1,0 +1,253 @@
+# Installation
+install
+url --url=http://172.16.1.1/dist/cent62
+repo --name=local1 --baseurl=http://172.16.1.1/dist/cent62/
+repo --name=local2 --baseurl=http://172.16.1.1/dist/RPMS/
+#repo --name=official --baseurl=http://ftp.iij.ad.jp/pub/linux/centos/6/os/x86_64/
+repo --name=vault --baseurl=http://vault.centos.org/6.2/os/x86_64/
+text
+reboot
+# Networking
+network --onboot=yes --device=eth0 --bootproto=dhcp --hostname=kvm2.cloud.local --noipv6
+network --onboot=yes --device=eth1 --bootproto=static --noipv6
+network --onboot=yes --device=eth2 --bootproto=static --noipv6
+network --onboot=yes --device=eth3 --bootproto=static --noipv6
+network --onboot=yes --device=eth4 --bootproto=static --noipv6 --mtu=9000
+network --onboot=yes --device=eth5 --bootproto=static --noipv6 --mtu=9000
+network --onboot=yes --device=eth6 --bootproto=static --noipv6
+network --onboot=yes --device=eth7 --bootproto=static --noipv6
+network --onboot=yes --device=eth8 --bootproto=static --noipv6
+network --onboot=yes --device=eth9 --bootproto=static --noipv6
+# Disk
+clearpart --all --initlabel --drives=sda
+autopart
+# Security
+rootpw karl094.
+firewall --enabled --ssh --port=etp:tcp,16509:tcp,5900:6100:tcp,49152:49216:tcp
+authconfig --enableshadow --passalgo=sha512
+selinux --permissive
+# Misc
+lang en
+keyboard jp106
+services --enabled=avahi-daemon,libvirtd,messagebus,ntpdate,ntpd --disabled=auditd,fcoe,haldaemon,ip6tables,postfix
+timezone Asia/Tokyo
+bootloader --location=mbr --driveorder=sda --append="crashkernel=auto consoleblank=0 rhgb"
+
+%packages --nobase
+@virtualization
+@virtualization-client
+@virtualization-platform
+@virtualization-tools
+
+bridge-utils
+libguestfs-mount
+libguestfs-tools
+qemu-kvm-tools
+virt-v2v
+
+xfsprogs
+
+avahi
+bind-utils
+curl
+man
+ntp
+ntpdate
+openssh-clients
+strace
+tcpdump
+traceroute
+wget
+%end
+
+%post --log=/root/ks-post.log
+
+# NIC Bonding & Bridge
+cat >> /etc/modprobe.d/bonding.conf <<_BONDING_CONF_
+alias cloud-mgmt bonding
+alias cloud-public bonding
+alias cloud-storage bonding
+alias cloud-guest bonding
+alias cloud-guest2 bonding
+_BONDING_CONF_
+
+ifcfg=/etc/sysconfig/network-scripts/ifcfg
+
+cat > ${ifcfg}-cloud-mgmt <<_IFCFG_CLOUD_MGMT_
+DEVICE=cloud-mgmt
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+IPADDR=172.16.1.6
+NETMASK=255.255.128.0
+GATEWAY=172.16.1.254
+USERCTL=no
+_IFCFG_CLOUD_MGMT_
+#
+cat > ${ifcfg}-bond0 <<_IFCFG_BOND0_
+DEVICE=bond0
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=static
+BRIDGE=cloud-mgmt
+USERCTL=no
+BONDING_OPTS="mode=1 miimon=100 updelay=5000"
+_IFCFG_BOND0_
+#
+sed -i -e '/BOOTPROTO/s/dhcp/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth0
+cat >> ${ifcfg}-eth0 <<_IFCFG_ETH0_
+MASTER=bond0
+SLAVE=yes
+_IFCFG_ETH0_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth1
+cat >> ${ifcfg}-eth1 <<_IFCFG_ETH1_
+MASTER=bond0
+SLAVE=yes
+_IFCFG_ETH1_
+##
+cat > ${ifcfg}-cloud-public <<_IFCFG_CLOUD_PUBLIC_
+DEVICE=cloud-public
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+USERCTL=no
+_IFCFG_CLOUD_PUBLIC_
+#
+cat > ${ifcfg}-bond1 <<_IFCFG_BOND1_
+DEVICE=bond1
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=static
+BRIDGE=cloud-public
+USERCTL=no
+BONDING_OPTS="mode=1 miimon=100 updelay=5000"
+_IFCFG_BOND1_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth2
+cat >> ${ifcfg}-eth2 <<_IFCFG_ETH2_
+MASTER=bond1
+SLAVE=yes
+_IFCFG_ETH2_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth3
+cat >> ${ifcfg}-eth3 <<_IFCFG_ETH3_
+MASTER=bond1
+SLAVE=yes
+_IFCFG_ETH3_
+##
+cat > ${ifcfg}-cloud-storage <<_IFCFG_CLOUD_STORAGE_
+DEVICE=cloud-storage
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+IPADDR=172.24.1.6
+NETMASK=255.255.128.0
+MTU=9000
+USERCTL=no
+_IFCFG_CLOUD_STORAGE_
+#
+cat > ${ifcfg}-bond2 <<_IFCFG_BOND2_
+DEVICE=bond2
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=static
+BRIDGE=cloud-storage
+MTU=9000
+USERCTL=no
+BONDING_OPTS="mode=1 miimon=100 updelay=5000"
+_IFCFG_BOND2_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth4
+cat >> ${ifcfg}-eth4 <<_IFCFG_ETH4_
+MASTER=bond2
+SLAVE=yes
+_IFCFG_ETH4_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth5
+cat >> ${ifcfg}-eth5 <<_IFCFG_ETH5_
+MASTER=bond2
+SLAVE=yes
+_IFCFG_ETH5_
+##
+cat > ${ifcfg}-cloud-guest <<_IFCFG_CLOUD_GUEST_
+DEVICE=cloud-guest
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+USERCTL=no
+_IFCFG_CLOUD_GUEST_
+#
+cat > ${ifcfg}-bond3 <<_IFCFG_BOND3_
+DEVICE=bond3
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=static
+BRIDGE=cloud-guest
+USERCTL=no
+BONDING_OPTS="mode=1 miimon=100 updelay=5000"
+_IFCFG_BOND3_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth6
+cat >> ${ifcfg}-eth6 <<_IFCFG_ETH6_
+MASTER=bond3
+SLAVE=yes
+_IFCFG_ETH6_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth7
+cat >> ${ifcfg}-eth7 <<_IFCFG_ETH7_
+MASTER=bond3
+SLAVE=yes
+_IFCFG_ETH7_
+##
+cat > ${ifcfg}-cloud-guest2 <<_IFCFG_CLOUD_GUEST2_
+DEVICE=cloud-guest2
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+USERCTL=no
+_IFCFG_CLOUD_GUEST2_
+#
+cat > ${ifcfg}-bond4 <<_IFCFG_BOND4_
+DEVICE=bond4
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=static
+BRIDGE=cloud-guest2
+USERCTL=no
+BONDING_OPTS="mode=1 miimon=100 updelay=5000"
+_IFCFG_BOND4_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth8
+cat >> ${ifcfg}-eth8 <<_IFCFG_ETH8_
+MASTER=bond4
+SLAVE=yes
+_IFCFG_ETH8_
+#
+sed -i -e '/BOOTPROTO/s/static/none/' -e '/NM_CONTROLLED/s/yes/no/' ${ifcfg}-eth9
+cat >> ${ifcfg}-eth9 <<_IFCFG_ETH9_
+MASTER=bond4
+SLAVE=yes
+_IFCFG_ETH9_
+#
+
+# GLUSTERFS
+yum install -y glusterfs
+yum install -y glusterfs-fuse
+yum install -y glusterfs-geo-replication
+yum install -y glusterfs-sever
+
+# KVM
+sed -i -e '/vnc_listen = /s/^# //' /etc/libvirt/qemu.conf
+
+#LIBVIRT
+sed -i -e '/^#listen_tls/s/^#//' -e '/^#listen_tcp/s/^#//' -e '/^#tcp_port/s/^#//' -e '/^#mdns_adv/s/^#//' -e '/^#auth_tcp = /a auth_tcp = "none"' /etc/libvirt/libvirtd.conf
+sed -i -e '/^#LIBVIRTD_ARGS/s/^#//' /etc/sysconfig/libvirtd
+
+# MISC
+sed -i -e '/^-A FORWARD -j REJECT/i -A FORWARD -m physdev --physdev-is-bridged -j ACCEPT' /etc/sysconfig/iptables
+sed -i -e 's/^#compress/compress/' /etc/logrotate.conf
+echo "search cloud.local" >> /etc/resolv.conf
+echo broadcastclient > /etc/ntp.conf
+echo 172.16.1.1 >> /etc/ntp/step-tickers
+wget -q -O - http://172.16.1.1/dist/CloudStack-latest.tar.gz | tar -C /root -zxf -
