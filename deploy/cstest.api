@@ -1,0 +1,10 @@
+#skip
+createNetwork&displaytext=root-takashis-01&name=root-takashis-01&networkofferingid=<DefaultIsolatedNetworkOfferingWithSourceNatService>&zoneid=<z1>&domainid=<ROOT>&account=takashis&acltype=Account
+#
+deployVirtualMachine&serviceofferingid=<Nano%20Instance>&templateid=<Nano>&zoneid=<z1>&account=admin&diskofferingid=&displayname=root-takashis-01&domainid=<ROOT>&group=root-takashis&name=root-takashis-01
+#start
+createAccount&accounttype=0&username=test&password=098f6bcd4621d373cade4e832627b4f6&firstname=User&lastname=Test&email=test@citrix.co.jp&domainid=<ROOT>
+#3
+deleteAccount&id=<test>
+#
+login&username=takashis&domainid=<ROOT>&timestamp=1364289137453156676
