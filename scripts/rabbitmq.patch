@@ -1,0 +1,60 @@
+diff -c a/componentContext.xml b/componentContext.xml
+*** a/componentContext.xml	2014-02-21 22:19:01.630999699 +0900
+--- b/componentContext.xml	2014-02-21 22:19:37.722999766 +0900
+***************
+*** 322,325 ****
+--- 322,335 ----
+      <property name="name" value="ExplicitDedicationProcessor"/>
+      <property name="type" value="ExplicitDedication"/>
+    </bean>
++ 
++   <bean id="eventNotificationBus" class="org.apache.cloudstack.mom.rabbitmq.RabbitMQEventBus">
++ 	<property name="name" value="eventNotificationBus"/>
++ 	<property name="server" value="172.16.1.1"/>
++ 	<property name="port" value="5672"/>
++ 	<property name="username" value="guest"/>
++ 	<property name="password" value="guest"/>
++ 	<property name="exchange" value="cloudstack-events"/>
++   </bean>
++ 
+  </beans>
+diff -c a/nonossComponentContext.xml b/nonossComponentContext.xml
+*** a/nonossComponentContext.xml	2014-02-21 22:19:01.630999699 +0900
+--- b/nonossComponentContext.xml	2014-02-21 22:10:31.082999698 +0900
+***************
+*** 434,437 ****
+--- 434,447 ----
+      <property name="name" value="ExplicitDedicationProcessor"/>
+      <property name="type" value="ExplicitDedication"/>
+    </bean>
++ 
++   <bean id="eventNotificationBus" class="org.apache.cloudstack.mom.rabbitmq.RabbitMQEventBus">
++ 	<property name="name" value="eventNotificationBus"/>
++ 	<property name="server" value="172.16.1.1"/>
++ 	<property name="port" value="5672"/>
++ 	<property name="username" value="guest"/>
++ 	<property name="password" value="guest"/>
++ 	<property name="exchange" value="cloudstack-events"/>
++   </bean>
++ 
+  </beans>
+diff -c a/simulatorComponentContext.xml b/simulatorComponentContext.xml
+*** a/simulatorComponentContext.xml	2014-02-21 22:20:46.902999611 +0900
+--- b/simulatorComponentContext.xml	2014-02-21 22:11:00.386999795 +0900
+***************
+*** 260,263 ****
+--- 260,273 ----
+      <property name="name" value="ExplicitDedicationProcessor"/>
+      <property name="type" value="ExplicitDedication"/>
+    </bean>
++ 
++   <bean id="eventNotificationBus" class="org.apache.cloudstack.mom.rabbitmq.RabbitMQEventBus">
++ 	<property name="name" value="eventNotificationBus"/>
++ 	<property name="server" value="172.16.1.1"/>
++ 	<property name="port" value="5672"/>
++ 	<property name="username" value="guest"/>
++ 	<property name="password" value="guest"/>
++ 	<property name="exchange" value="cloudstack-events"/>
++   </bean>
++ 
+  </beans>

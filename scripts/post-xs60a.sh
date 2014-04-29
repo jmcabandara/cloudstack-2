@@ -12,6 +12,8 @@ echo 172.16.1.1 >> ${TOP}/etc/ntp/step-tickers
 wget -O ${TOP}/etc/rc.d/init.d/postslave http://172.16.1.1/scripts/postslave
 chmod 755 ${TOP}/etc/rc.d/init.d/postslave
 cd ${TOP}/etc/rc.d/rc3.d; ln -s ../init.d/postslave S99zzpostslave
+wget -O ${TOP}/root/.ssh/authorized_keys http://172.16.1.1/dist/id_rsa.pub
+chmod 600 ${TOP}/root/.ssh/authorized_keys
 #
 #
 exit 0

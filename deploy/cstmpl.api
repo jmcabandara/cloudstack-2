@@ -1,1 +1,3 @@
-createServiceOffering&name=Nano%20Instance&displaytext=Nano%20Instance&cpunumber=1&storagetype=shared&cpuspeed=512&memory=128&offerha=false&limitcpuuse=false&issystem=false
+#
+registerTemplate&name=Tiny&displaytext=Tiny&url=http://172.16.1.1/templates/ttylinux.vhd&format=VHD&hypervisor=XenServer&ostypeid=139&passwordenabled=false&zoneid=-1&isextractable=true&isfeatured=true&ispublic=true
+#5

@@ -1,0 +1,242 @@
+#
+createNetworkOffering\
+ &name=Bare100m\
+ &displayText=Barebone%20100Mbps\
+ &guestIpType=Shared\
+ &networkRate=100\
+ &trafficType=GUEST\
+ &supportedServices=\
+ &specifyIpRanges=true\
+ &specifyVlan=true\
+ &tags=100M
+#3
+updateNetworkOffering&id=<Bare100M>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Bare1g\
+ &displayText=Barebone%201Gbps\
+ &guestIpType=Shared\
+ &networkRate=1000\
+ &trafficType=GUEST\
+ &supportedServices=\
+ &specifyIpRanges=true\
+ &specifyVlan=true\
+ &tags=1G
+#3
+updateNetworkOffering&id=<Bare1G>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Direct100m\
+ &displayText=Direct%20100Mbps\
+ &guestIpType=Shared\
+ &networkRate=100\
+ &trafficType=GUEST\
+ &specifyIpRanges=true\
+ &specifyVlan=true\
+ &supportedServices=Dhcp,Dns,UserData\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &tags=100M
+#3
+updateNetworkOffering&id=<Direct100m>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Direct1g\
+ &displayText=Direct%201Gbps\
+ &guestIpType=Shared\
+ &networkRate=1000\
+ &trafficType=GUEST\
+ &specifyIpRanges=true\
+ &specifyVlan=true\
+ &supportedServices=Dhcp,Dns,UserData\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &tags=1G
+#1
+createNetworkOffering\
+ &name=Direct100mSG\
+ &displayText=Direct%20100Mbps%20with%20Security%20Group\
+ &guestIpType=Shared\
+ &networkRate=100\
+ &trafficType=GUEST\
+ &specifyIpRanges=true\
+ &specifyVlan=true\
+ &supportedServices=Dhcp,Dns,UserData,SecurityGroup\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &serviceProviderList[3].service=SecurityGroup\
+ &serviceProviderList[3].provider=VirtualRouter\
+ &tags=100M
+#3
+updateNetworkOffering&id=<Direct100m>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Direct1gSG\
+ &displayText=Direct%201Gbps%20with%20Security%20Group\
+ &guestIpType=Shared\
+ &networkRate=1000\
+ &trafficType=GUEST\
+ &specifyIpRanges=true\
+ &specifyVlan=true\
+ &supportedServices=Dhcp,Dns,UserData,SecurityGroup\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &serviceProviderList[3].service=SecurityGroup\
+ &serviceProviderList[3].provider=VirtualRouter\
+ &tags=1G
+#3
+updateNetworkOffering&id=<Direct1g>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Nat100mBasic\
+ &displayText=Nat%20100Mbps%20with%20Basic%20Services\
+ &guestIpType=Isolated\
+ &networkRate=100\
+ &trafficType=GUEST\
+ &isPersistent=false\
+ &specifyIpRanges=false\
+ &specifyVlan=false\
+ &supportedServices=Dhcp,Dns,UserData,SourceNat\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &serviceProviderList[3].service=SourceNat\
+ &serviceProviderList[3].provider=VirtualRouter\
+ &serviceCapabilityList[0].service=SourceNat\
+ &serviceCapabilityList[0].capabilitytype=SupportedSourceNatTypes\
+ &serviceCapabilityList[0].capabilityvalue=peraccount\
+ &conserveMode=false\
+ &egressDefaultPolicy=true\
+ &availability=Optional\
+ &tags=100M
+#3
+updateNetworkOffering&id=<Nat100mBasic>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Nat1gBasic\
+ &displayText=Nat%201Gbps%20with%20Basic%20Services\
+ &guestIpType=Isolated\
+ &networkRate=1000\
+ &trafficType=GUEST\
+ &isPersistent=false\
+ &specifyIpRanges=false\
+ &specifyVlan=false\
+ &supportedServices=Dhcp,Dns,UserData,SourceNat\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &serviceProviderList[3].service=SourceNat\
+ &serviceProviderList[3].provider=VirtualRouter\
+ &serviceCapabilityList[0].service=SourceNat\
+ &serviceCapabilityList[0].capabilitytype=SupportedSourceNatTypes\
+ &serviceCapabilityList[0].capabilityvalue=peraccount\
+ &conserveMode=false\
+ &egressDefaultPolicy=true\
+ &availability=Optional\
+ &tags=1G
+#3
+updateNetworkOffering&id=<Nat1gBasic>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Nat100mAdvanced\
+ &displayText=Nat%20100Mbps%20with%20Advanced%20Services\
+ &guestIpType=Isolated\
+ &networkRate=100\
+ &trafficType=GUEST\
+ &isPersistent=false\
+ &specifyIpRanges=false\
+ &specifyVlan=false\
+ &supportedServices=Vpn,Dhcp,Dns,Firewall,Lb,UserData,SourceNat,StaticNat,PortForwarding\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &serviceProviderList[3].service=SourceNat\
+ &serviceProviderList[3].provider=VirtualRouter\
+ &serviceProviderList[4].service=Lb\
+ &serviceProviderList[4].provider=VirtualRouter\
+ &serviceProviderList[5].service=Vpn\
+ &serviceProviderList[5].provider=VirtualRouter\
+ &serviceProviderList[6].service=Firewall\
+ &serviceProviderList[6].provider=VirtualRouter\
+ &serviceProviderList[7].service=StaticNat\
+ &serviceProviderList[7].provider=VirtualRouter\
+ &serviceProviderList[8].service=PortForwarding\
+ &serviceProviderList[8].provider=VirtualRouter\
+ &serviceCapabilityList[0].service=SourceNat\
+ &serviceCapabilityList[0].capabilitytype=SupportedSourceNatTypes\
+ &serviceCapabilityList[0].capabilityvalue=peraccount\
+ &serviceCapabilityList[1].service=lb\
+ &serviceCapabilityList[1].capabilitytype=SupportedLbIsolation\
+ &serviceCapabilityList[1].capabilityvalue=dedicated\
+ &conserveMode=true\
+ &egressDefaultPolicy=true\
+ &availability=Optional\
+ &tags=100M
+#3
+updateNetworkOffering&id=<Nat100mAdvanced>&state=Enabled
+#1
+createNetworkOffering\
+ &name=Nat1gAdvanced\
+ &displayText=Nat%201Gbps%20with%20Advanced%20Services\
+ &guestIpType=Isolated\
+ &networkRate=1000\
+ &trafficType=GUEST\
+ &isPersistent=false\
+ &specifyIpRanges=false\
+ &specifyVlan=false\
+ &supportedServices=Vpn,Dhcp,Dns,Firewall,Lb,UserData,SourceNat,StaticNat,PortForwarding\
+ &serviceProviderList[0].service=Dhcp\
+ &serviceProviderList[0].provider=VirtualRouter\
+ &serviceProviderList[1].service=Dns\
+ &serviceProviderList[1].provider=VirtualRouter\
+ &serviceProviderList[2].service=UserData\
+ &serviceProviderList[2].provider=VirtualRouter\
+ &serviceProviderList[3].service=SourceNat\
+ &serviceProviderList[3].provider=VirtualRouter\
+ &serviceProviderList[4].service=Lb\
+ &serviceProviderList[4].provider=VirtualRouter\
+ &serviceProviderList[5].service=Vpn\
+ &serviceProviderList[5].provider=VirtualRouter\
+ &serviceProviderList[6].service=Firewall\
+ &serviceProviderList[6].provider=VirtualRouter\
+ &serviceProviderList[7].service=StaticNat\
+ &serviceProviderList[7].provider=VirtualRouter\
+ &serviceProviderList[8].service=PortForwarding\
+ &serviceProviderList[8].provider=VirtualRouter\
+ &serviceCapabilityList[0].service=SourceNat\
+ &serviceCapabilityList[0].capabilitytype=SupportedSourceNatTypes\
+ &serviceCapabilityList[0].capabilityvalue=peraccount\
+ &serviceCapabilityList[1].service=lb\
+ &serviceCapabilityList[1].capabilitytype=SupportedLbIsolation\
+ &serviceCapabilityList[1].capabilityvalue=dedicated\
+ &conserveMode=true\
+ &egressDefaultPolicy=true\
+ &availability=Optional\
+ &tags=1G
+#3
+updateNetworkOffering&id=<Nat1gAdvanced>&state=Enabled

@@ -1,5 +1,5 @@
 #
-createZone&networktype=Advanced&name=z1&dns1=172.16.1.1&internaldns1=172.16.1.1&guestcidraddress=10.1.1.0/24&securitygroupenabled=false
+createZone&networktype=Advanced&name=z1&dns1=10.100.1.1&internaldns1=172.16.1.1&guestcidraddress=10.1.1.0/24&securitygroupenabled=false
 #
 createPhysicalNetwork&name=cloud-mgmt&zoneid=<z1>
 #
@@ -9,13 +9,15 @@ createPhysicalNetwork&name=cloud-storage&zoneid=<z1>
 #
 createPhysicalNetwork&name=cloud-guest&zoneid=<z1>
 #5
-addTrafficType&traffictype=Management&physicalnetworkid=<cloud-mgmt>&xennetworklabel=cloud-mgmt&kvmnetworklabel=cloud-mgmt&vmwarenetworklabel=cloud-mgmt
+addTrafficType&traffictype=Management&physicalnetworkid=<cloud-mgmt>&xennetworklabel=cloud-mgmt&kvmnetworklabel=cloudbr0&vmwarenetworklabel=cloud-mgmt
 #
-addTrafficType&traffictype=Public&physicalnetworkid=<cloud-public>&xennetworklabel=cloud-public&kvmnetworklabel=cloud-public&vmwarenetworklabel=cloud-public
+addTrafficType&traffictype=Public&physicalnetworkid=<cloud-public>&xennetworklabel=cloud-public&kvmnetworklabel=cloudbr1&vmwarenetworklabel=cloud-public
 #
-addTrafficType&traffictype=Storage&physicalnetworkid=<cloud-storage>&xennetworklabel=cloud-storage&kvmnetworklabel=cloud-storage&vmwarenetworklabel=cloud-storage
+addTrafficType&traffictype=Storage&physicalnetworkid=<cloud-storage>&xennetworklabel=cloud-storage&kvmnetworklabel=cloudbr2&vmwarenetworklabel=cloud-storage
 #
-addTrafficType&traffictype=Guest&physicalnetworkid=<cloud-guest>&xennetworklabel=cloud-guest&kvmnetworklabel=cloud-guest&vmwarenetworklabel=cloud-guest
+addTrafficType&traffictype=Guest&physicalnetworkid=<cloud-guest>&xennetworklabel=cloud-guest&kvmnetworklabel=cloudbr3&vmwarenetworklabel=cloud-guest
+#
+addTrafficType&traffictype=Guest&physicalnetworkid=<cloud-guest2>&xennetworklabel=cloud-guest2&kvmnetworklabel=cloudbr4&vmwarenetworklabel=cloud-guest2
 #3
 updatePhysicalNetwork&id=<cloud-mgmt>&state=Enabled
 #
@@ -24,6 +26,8 @@ updatePhysicalNetwork&id=<cloud-public>&state=Enabled
 updatePhysicalNetwork&id=<cloud-storage>&state=Enabled
 #
 updatePhysicalNetwork&id=<cloud-guest>&state=Enabled
+#
+updatePhysicalNetwork&id=<cloud-guest2>&state=Enabled
 #3
 configureVirtualRouterElement&id=<VirtualRouter,cloud-guest>&enabled=true
 #

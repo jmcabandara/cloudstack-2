@@ -10,41 +10,52 @@ require 'cgi'
 require 'openssl'
 require 'base64'
 
+proto = "http"
+mgsvr = "172.16.1.2"
+aport = "8096"
+uport = "8080"
+bpath = "/client/api"
+
 def sign(reqstr, secretkey)
   CGI.escape(Base64.strict_encode64(OpenSSL::HMAC.digest(OpenSSL::Digest::SHA1.new, secretkey, reqstr.downcase.split(/&/).sort.join('&'))))
 end
 
-db = Mysql2::Client::new(:host => '172.16.1.2', :username => 'cloud', :password => 'cloud', :database => 'cloud')
+db = Mysql2::Client::new(:host => "#{mgsvr}", :username => 'cloud', :password => 'cloud', :database => 'cloud')
 
-user = nil
-auth = nil
+user = ""
+resp = nil
+apikey = ""
+secret = ""
 OptionParser.new do |opt|
   opt.on('-a VALUE') do |u|
     user = u
-    puts "Will authenticate as user #{user}" if $DEBUG
-    sql = "select uuid from user where username = '#{user}'"
-    puts "Executing SQL query: #{sql}" if $DEBUG
+    sql = "select uuid,api_key,secret_key from user where username = '#{user}'"
     uid = ""
     db.query(sql).each do |col|
       uid = col['uuid']
+      apikey = col['api_key']
     end
-    uri = URI.parse("http://172.16.1.2:8096/client/api?command=registerUserKeys&id=#{uid}&response=json")
-    p uri.request_uri if $DEBUG
-    response = Net::HTTP.new(uri.host, uri.port).get(uri.request_uri)
-    auth = JSON.parse(response.body)
-    p auth if $DEBUG
+    if apikey
+      uri = URI.parse("#{proto}://#{mgsvr}:#{aport}#{bpath}?command=getUser&userApiKey=#{apikey}&response=json")
+      resp = JSON.parse(Net::HTTP.new(uri.host, uri.port).get(uri.request_uri).body)
+      secret = resp['getuserresponse']['user']['secretkey']
+    else
+      uri = URI.parse("#{proto}://#{mgsvr}:#{aport}#{bpath}?command=registerUserKeys&id=#{uid}&response=json")
+      resp = JSON.parse(Net::HTTP.new(uri.host, uri.port).get(uri.request_uri).body)
+      apikey = resp['registeruserkeysresponse']['userkeys']['apikey']
+      secret = resp['registeruserkeysresponse']['userkeys']['secretkey']
+    end
   end
   opt.parse!(ARGV)
 end
 
 skip = false
 while line = gets
-  puts "Processing #{line}" if $DEBUG
   line.strip!
   if /^#/ =~ line
     case control = $'
     when /^exit/
-      puts 'Exiting' if $DEBUG
+      puts 'Exiting'
       exit
     when /^skip/
       skip = true
@@ -55,14 +66,21 @@ while line = gets
       sleep control.to_i unless skip
     end
     next
+  elsif /\\$/ =~ line
+    line.slice!(-1)
+    while cont = gets
+      next if /^#/ =~ cont
+      cont.strip!
+      line << cont
+      break unless /\\$/ =~ line
+      line.slice!(-1)
+    end
   end
 
   next if skip
 
   cmd = line.split(/&/).shift
-  puts "Using API: #{cmd}" if $DEBUG
   line.gsub!(/&([A-Za-z]+)=<([^&<>]+)>/) do |matched|
-    puts "Substituting #{matched}" if $DEBUG
     value = $2
     case param = $1
     when /domainid/i
@@ -79,6 +97,8 @@ while line = gets
       sql = "select uuid from physical_network where name = '#{value}'"
     when /id/i
       case cmd
+      when /domain/i
+        sql = "select uuid from domain where name = '#{value}'"
       when /account/i
         sql = "select uuid from account where name = '#{value}'"
       when /user/i
@@ -87,36 +107,36 @@ while line = gets
         sql = "select uuid from data_center where name = '#{value}'"
       when /physicalnetwork/i
         sql = "select uuid from physical_network where name = '#{value}'"
+      when /networkoffering/i
+        sql = "select uuid from network_offerings where name = '#{value}'"
       when /networkserviceprovider/i
         val = value.split(/,/)
         sql = "select nsp.uuid from physical_network_service_providers nsp inner join physical_network pn on nsp.physical_network_id = pn.id and nsp.provider_name = '#{val[0]}' and pn.name = '#{val[1]}'"
-      when /virtualrouterelement/i
+      when /(virtualrouter|internalloadbalancer)element/i
         val = value.split(/,/)
         sql = "select v.uuid from virtual_router_providers v inner join physical_network_service_providers n on v.nsp_id = n.id and v.type = '#{val[0]}' inner join physical_network p on n.physical_network_id = p.id and p.name = '#{val[1]}'"
       end
     else
       sql = ' '
     end
-    puts "Executing SQL query: #{sql}" if $DEBUG
     db.query(sql).each do |col|
       value = col['uuid']
     end
     '&' + param + '=' + value
   end
 
-  if user
-    reqstr = "command=#{line}&response=json&apikey=#{auth['registeruserkeysresponse']['userkeys']['apikey']}"
+  if user.empty?
+    uri = URI.parse("#{proto}://#{mgsvr}:#{aport}#{bpath}?command=#{line}&response=json")
+  else
+    reqstr = "command=#{line}&response=json&apikey=#{apikey}"
     reqstr.gsub!(/([^&=]+)=([^&=]+)/) do |matched|
       $1 + '=' + URI.encode($2)
     end
-    signature = sign(reqstr, auth['registeruserkeysresponse']['userkeys']['secretkey'])
-    uri = URI.parse("http://172.16.1.2:8080/client/api?#{reqstr}&signature=#{signature}")
-  else
-    uri = URI.parse("http://172.16.1.2:8096/client/api?command=#{line}&response=json")
+    signature = sign(reqstr, secret)
+    uri = URI.parse("#{proto}://#{mgsvr}:#{uport}#{bpath}?#{reqstr}&signature=#{signature}")
   end
-  p uri.request_uri
-  unless $DEBUG
-    response = Net::HTTP.new(uri.host, uri.port).get(uri.request_uri)
-    jj JSON.parse(response.body)
-  end
+  p uri.to_s
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.read_timeout = 180
+  jj JSON.parse(http.get(uri.request_uri).body)
 end

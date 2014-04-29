@@ -1,2 +1,3 @@
 #set -x
-curl -s -v 'http://172.16.1.2:8080/client/api?command=login&domain=/&username=takashis&password=5ce8b4367b81fabf0869982adc1463bb' | xmllint --format -
+domid=$(mysql -N -B -h csms -e 'select uuid from cloud.domain where name = "ROOT";')
+curl -s -v "http://csms:8080/client/api?command=login&domainId=${domid}&username=admin&password=password&response=json" | python -m json.tool

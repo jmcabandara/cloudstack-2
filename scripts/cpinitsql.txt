@@ -1,0 +1,34 @@
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+USE cloud_portal;
+#UPDATE configuration SET value='' WHERE name='com.citrix.cpbm.';
+#AddressBook
+UPDATE configuration SET value='accounts-request@cloud.com' WHERE name='com.citrix.cpbm.portal.addressbook.accountApprovalEmail';
+UPDATE configuration SET value='cloudportal@cloud.com' WHERE name='com.citrix.cpbm.portal.addressbook.adminEmail';
+UPDATE configuration SET value='finance@cloud.com' WHERE name='com.citrix.cpbm.portal.addressbook.financeEmail';
+UPDATE configuration SET value='sales@cloud.com' WHERE name='com.citrix.cpbm.portal.addressbook.salesSupportEmail';
+UPDATE configuration SET value='helpdesk@cloud.com' WHERE name='com.citrix.cpbm.portal.addressbook.helpDeskEmail';
+#AnonymousBrowsing
+UPDATE configuration SET value='true' WHERE name='com.citrix.cpbm.public.catalog.display';
+#Billing
+UPDATE configuration SET value='/usr/share/cloud/portal/tmp' WHERE name='com.citrix.cpbm.portal.billing.logPath';
+UPDATE configuration SET value='/usr/share/cloud/portal/tmp' WHERE name='com.citrix.cpbm.portal.billing.export.directory';
+UPDATE configuration SET value='true' WHERE name='com.citrix.cpbm.portal.billing.generate.InvoiceEmail';
+#Marketing
+UPDATE configuration SET value='https://www.citrix.com/products/cloudportal-business-manager/overview.html' WHERE name='com.citrix.cpbm.portal.marketing.home.url';
+UPDATE configuration SET value='https://www.citrix.com/cpbm/marketplace' WHERE name='com.citrix.cpbm.portal.marketing.marketing.url';
+UPDATE configuration SET value='http://support.citrix.com/product/cpbm/' WHERE name='com.citrix.cpbm.portal.marketing.support.url';
+#Settings
+UPDATE configuration SET value='172.16.1.3' WHERE name='com.citrix.cpbm.portal.settings.errorNotification.prefix';
+UPDATE configuration SET value='0120-345-6789' WHERE name='com.citrix.cpbm.portal.settings.helpdesk.phone';
+UPDATE configuration SET value='http://support.citrix.com/cloudsupport' WHERE name='com.citrix.cpbm.portal.settings.helpdesk.url';
+UPDATE configuration SET value='172.16.1.3' WHERE name='com.citrix.cpbm.portal.settings.public.host';
+UPDATE configuration SET value='8080' WHERE name='com.citrix.cpbm.portal.settings.public.port';
+#Notification
+UPDATE configuration SET value='billing-update@cloud.com' WHERE name='com.citrix.cpbm.crm.notifications.accountsOutboundEmail';
+UPDATE configuration SET value='no-reply@cloud.com' WHERE name='com.citrix.cpbm.crm.notifications.internalEmail';
+UPDATE configuration SET value='order@cloud.com' WHERE name='com.citrix.cpbm.crm.notifications.outboundEmail';
+UPDATE configuration SET value='sales@cloud.com' WHERE name='com.citrix.cpbm.crm.notifications.salesEmail';
+UPDATE configuration SET value='no-reply@cloud.com' WHERE name='com.citrix.cpbm.crm.notifications.supportEmail';
+UPDATE configuration SET value='report@cloud.com' WHERE name='reports.email';
+UPDATE configuration SET value='error@cloud.com' WHERE name='vmops.error.notification.to';
+#UPDATE configuration SET value='' WHERE name='com.citrix.cpbm.';

@@ -3,7 +3,7 @@ rootpw karl094.
 autopart --firstdisk --overwritevmfs
 install url http://172.16.1.1/dist/esx41
 keyboard Japanese
-network --bootproto=static --ip=172.16.1.8 --netmask=255.255.128.0 --gateway=172.16.1.254 --nameserver=172.16.1.1 --hostname=esxi41.cloud.local --device=vmnic0 --addvmportgroup=0
+network --bootproto=static --ip=172.16.1.8 --netmask=255.255.252.0 --gateway=172.16.1.254 --nameserver=172.16.1.1 --hostname=esxi41.cloud.local --device=vmnic0 --addvmportgroup=0
 reboot
 
 %firstboot --unsupported --interpreter=busybox --level=998
@@ -24,37 +24,32 @@ vim-cmd vimsvc/license --set MH020-8E310-J8A39-0AAA2-1R661
 
 # vSwitch0 (cloud-mgmt)
 esxcfg-vswitch -L vmnic1 vSwitch0
-esxcfg-vswitch -m 9000 vSwitch0
 vim-cmd hostsvc/net/vswitch_setpolicy --nicteaming-policy=loadbalance_ip vSwitch0
 
 # cloud-public
 esxcfg-vswitch -a cloud-public
 esxcfg-vswitch -L vmnic2 cloud-public
 esxcfg-vswitch -L vmnic3 cloud-public
-esxcfg-vswitch -m 9000 cloud-public
 vim-cmd hostsvc/net/vswitch_setpolicy --nicteaming-policy=loadbalance_ip cloud-public
 
 # cloud-storage
 esxcfg-vswitch -a cloud-storage
 esxcfg-vswitch -L vmnic4 cloud-storage
 esxcfg-vswitch -L vmnic5 cloud-storage
-esxcfg-vswitch -m 9000 cloud-storage
 esxcfg-vswitch -A PrimaryStorage cloud-storage
-esxcfg-vmknic -a -i 172.24.0.8 -n 255.255.128.0 -p PrimaryStorage
+esxcfg-vmknic -a -i 172.24.0.8 -n 255.255.252.0 -p PrimaryStorage
 vim-cmd hostsvc/net/vswitch_setpolicy --nicteaming-policy=loadbalance_ip cloud-storage
 
 # cloud-guest
 esxcfg-vswitch -a cloud-guest
 esxcfg-vswitch -L vmnic6 cloud-guest
 esxcfg-vswitch -L vmnic7 cloud-guest
-esxcfg-vswitch -m 9000 cloud-guest
 vim-cmd hostsvc/net/vswitch_setpolicy --nicteaming-policy=loadbalance_ip cloud-guest
 
 # cloud-guest2
 esxcfg-vswitch -a cloud-guest2
 esxcfg-vswitch -L vmnic8 cloud-guest2
 esxcfg-vswitch -L vmnic9 cloud-guest2
-esxcfg-vswitch -m 9000 cloud-guest2
 vim-cmd hostsvc/net/vswitch_setpolicy --nicteaming-policy=loadbalance_ip cloud-guest2
 
 vim-cmd hostsvc/vmotion/vnic_set vmk0

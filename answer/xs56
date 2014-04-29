@@ -8,8 +8,8 @@
   <post-install-script type="url">http://172.16.1.1/scripts/post-xs56.sh</post-install-script>
   <admin-interface name="eth0" proto="static">
     <ip>172.16.1.56</ip>
-    <subnet-mask>255.255.0.0</subnet-mask>
-    <gateway>172.16.254.254</gateway>
+    <subnet-mask>255.255.252.0</subnet-mask>
+    <gateway>172.16.1.254</gateway>
   </admin-interface>
   <nameserver>172.16.1.1</nameserver>
   <timezone>Asia/Tokyo</timezone>

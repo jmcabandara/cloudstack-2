@@ -9,7 +9,7 @@
   <script stage="filesystem-populated" type="url">http://172.16.1.1/scripts/post-xs60.sh</script>
   <admin-interface name="eth0" proto="static">
     <ip>172.16.1.60</ip>
-    <subnet-mask>255.255.128.0</subnet-mask>
+    <subnet-mask>255.255.252.0</subnet-mask>
     <gateway>172.16.1.254</gateway>
   </admin-interface>
   <nameserver>172.16.1.1</nameserver>

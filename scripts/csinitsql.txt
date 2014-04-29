@@ -1,0 +1,48 @@
+# UPDATE cloud.configuration SET value='' WHERE name='';
+UPDATE cloud.configuration SET value='60' WHERE name='account.cleanup.interval';
+UPDATE cloud.configuration SET value='takashi@cloud.com' WHERE name='alert.email.addresses';
+UPDATE cloud.configuration SET value='alert@cloud.com' WHERE name='alert.email.sender';
+UPDATE cloud.configuration SET value='7' WHERE name='alert.purge.delay';
+UPDATE cloud.configuration SET value='smtp.cloud.com' WHERE name='alert.smtp.host';
+UPDATE cloud.configuration SET value='25' WHERE name='alert.smtp.port';
+UPDATE cloud.configuration SET value='60' WHERE name='capacity.skipcounting.hours';
+UPDATE cloud.configuration SET value='0.99' WHERE name='cluster.cpu.allocated.capacity.disablethreshold';
+UPDATE cloud.configuration SET value='0.99' WHERE name='cluster.memory.allocated.capacity.disablethreshold';
+UPDATE cloud.configuration SET value='1' WHERE name='concurrent.snapshots.threshold.perhost';
+UPDATE cloud.configuration SET value='20' WHERE name='consoleproxy.session.max';
+UPDATE cloud.configuration SET value='2' WHERE name='cpu.overprovisioning.factor';
+UPDATE cloud.configuration SET value='100' WHERE name='custom.diskoffering.size.max';
+UPDATE cloud.configuration SET value='true' WHERE name='enable.dynamic.scale.vm';
+UPDATE cloud.configuration SET value='true' WHERE name='enable.ec2.api';
+UPDATE cloud.configuration SET value='true' WHERE name='enable.s3.api';
+UPDATE cloud.configuration SET value='3' WHERE name='event.purge.delay';
+UPDATE cloud.configuration SET value='60' WHERE name='expunge.delay';
+UPDATE cloud.configuration SET value='60' WHERE name='expunge.interval';
+UPDATE cloud.configuration SET value='cloud.local' WHERE name='guest.domain.suffix';
+UPDATE cloud.configuration SET value='8096' WHERE name='integration.api.port';
+UPDATE cloud.configuration SET value='10' WHERE name='job.expire.minutes';
+UPDATE cloud.configuration SET value='true' WHERE name='kvm.snapshot.enabled';
+UPDATE cloud.configuration SET value='2' WHERE name='mem.overprovisioning.factor';
+UPDATE cloud.configuration SET value='60' WHERE name='network.gc.interval';
+UPDATE cloud.configuration SET value='60' WHERE name='network.gc.wait';
+UPDATE cloud.configuration SET value='0.99' WHERE name='pool.storage.allocated.capacity.disablethreshold';
+UPDATE cloud.configuration SET value='0.99' WHERE name='pool.storage.capacity.disablethreshold';
+UPDATE cloud.configuration SET value='smtp.cloud.com' WHERE name='project.smtp.host';
+UPDATE cloud.configuration SET value='172.16.0.0/16' WHERE name='secstorage.allowed.internal.sites';
+UPDATE cloud.configuration SET value='20' WHERE name='secstorage.session.max';
+UPDATE cloud.configuration SET value='60' WHERE name='storage.cleanup.interval';
+UPDATE cloud.configuration SET value='true' WHERE name='system.vm.random.password';
+UPDATE cloud.configuration SET value='Asia/Tokyo' WHERE name='usage.aggregation.timezone';
+UPDATE cloud.configuration SET value='Asia/Tokyo' WHERE name='usage.execution.timezone';
+UPDATE cloud.configuration SET value='true' WHERE name='vm.instancename.flag';
+#
+UPDATE cloud.service_offering SET ram_size = 192 WHERE vm_type = 'consoleproxy';
+UPDATE cloud.service_offering SET ram_size = 192 WHERE vm_type = 'secondarystoragevm';
+#
+UPDATE cloud.user SET password=RAND() WHERE id=1;
+#
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+#
+CREATE USER cpbm IDENTIFIED BY 'cpbm';
+GRANT ALL PRIVILEGES ON *.* TO 'cpbm'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;

@@ -40,18 +40,7 @@ bootloader --location=mbr --driveorder=sda --append="crashkernel=auto consolebla
 -fcoe-utils
 -iscsi-initiator-utils
 -ivtv-firmware
--iwl100-firmware
--iwl1000-firmware
--iwl2100-firmware
--iwl2200-firmware
--iwl3945-firmware
--iwl4965-firmware
--iwl5000-firmware
--iwl5150-firmware
--iwl6000-firmware
--iwl6000g2a-firmware
--iwl6000g2b-firmware
--iwl6050-firmware
+-iwl*-firmware
 -libcgroup
 -libedit
 -libselinux-python
@@ -76,10 +65,24 @@ openssh-server
 
 %post --log=/root/ks-post.log
 rpm -e $(rpm -qa \*firmware | grep -v kernel)
-yum -y remove authconfig dracut dracut-kernel iptables-ipv6 newt-python newt system-config-firewall-base
-sed -i -e '/ACTIVE_CONSOLES/s/\-6/\-2/' /etc/sysconfig/init
+yum -y remove authconfig dracut dracut-kernel fcoe-utils iptables-ipv6 lldpad NetworkManager newt-python newt system-config-firewall-base
+yum clean all
+grubby --update-kernel=ALL --remove-args="rhgb quiet"
 userdel -f ftp
 userdel -f gopher
 userdel -f games
 userdel -f lp
 userdel -f uucp
+sed -i -e '/ACTIVE_CONSOLES/s/\-6/\-2/' /etc/sysconfig/init
+rm -f /etc/udev/rules.d/70-persistent-net.rules
+rm -f /etc/ssh/*key*
+rm -f /root/.ssh/known_hosts
+truncate -s 0 \
+  /var/log/cron		\
+  /var/log/maillog	\
+  /var/log/messages	\
+  /var/log/secure	\
+  /var/log/spooler	\
+  /var/log/dracut.log	\
+  /var/log/lastlog	\
+  /var/log/wtmp
