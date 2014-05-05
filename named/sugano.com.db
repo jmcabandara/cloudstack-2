@@ -1,0 +1,10 @@
+$TTL	1d
+@	IN SOA  sugano.com.  root.sugano.com.(
+		2014021701	; Serial
+		8h		; Refresh
+		4h		; Retry
+		1w		; Expire
+		1d)		; Minimum
+	IN NS	sugano.com.
+@	IN A	172.16.1.1
+$GENERATE 1-254		10-100-2-$	A 10.100.2.$

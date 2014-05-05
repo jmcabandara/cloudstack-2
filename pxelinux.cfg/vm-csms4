@@ -1,0 +1,4 @@
+default csms
+label csms
+  kernel centos64_64/vmlinuz
+  append load initrd=centos64_64/initrd.img ks=http://172.16.1.1/ks/csms ksdevice=eth0

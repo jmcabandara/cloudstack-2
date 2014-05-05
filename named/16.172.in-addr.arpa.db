@@ -1,0 +1,9 @@
+$TTL	1d
+@	IN SOA  ns.cloud.local.  root.cloud.local.(
+		2012051401	; Serial
+		2h		; Refresh
+		1h		; Retry
+		3d		; Expire
+		1d)		; Minimum
+	IN NS	ns.cloud.local.
+1.1	IN PTR	ns.cloud.local.

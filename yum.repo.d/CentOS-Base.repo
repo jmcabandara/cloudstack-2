@@ -1,0 +1,14 @@
+[base]
+name=CentOS-$releasever - Base
+baseurl=http://ftp.iij.ad.jp/pub/linux/centos/$releasever/os/$basearch/
+gpgcheck=0
+
+[updates]
+name=CentOS-$releasever - Updates
+baseurl=http://ftp.iij.ad.jp/pub/linux/centos/$releasever/updates/$basearch/
+gpgcheck=0
+
+[extras]
+name=CentOS-$releasever - Extras
+baseurl=http://ftp.iij.ad.jp/pub/linux/centos/$releasever/extras/$basearch/
+gpgcheck=0

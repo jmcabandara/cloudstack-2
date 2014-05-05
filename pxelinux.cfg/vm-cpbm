@@ -1,0 +1,4 @@
+default cpbm
+label cpbm
+  kernel centos63_64/vmlinuz
+  append load initrd=centos63_64/initrd.img ks=http://172.16.1.1/ks/cpbm ksdevice=eth0

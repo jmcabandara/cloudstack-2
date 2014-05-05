@@ -1,0 +1,4 @@
+default esx41
+label esx41
+  kernel syslinux/mboot.c32
+  append esxi41/vmkboot.gz ks=http://172.16.1.1/ks/esx41 --- esxi41/vmkernel.gz --- esxi41/sys.vgz --- esxi41/cim.vgz --- esxi41/ienviron.vgz --- esxi41/install.vgz

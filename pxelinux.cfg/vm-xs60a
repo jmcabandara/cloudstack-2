@@ -1,0 +1,4 @@
+default xenserver
+label xenserver
+  kernel syslinux/mboot.c32 
+  append xs60/xen.gz dom0_max_vcpus=2 dom0_mem=752M com1=115200,8n1 console=com1,vga --- xs60/vmlinuz xencons=hvc console=hvc0 console=tty0 answerfile=http://172.16.1.1/answer/xs60a -answerfile answerfile_device=eth0 install --- xs60/install.img

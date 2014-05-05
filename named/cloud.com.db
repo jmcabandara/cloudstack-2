@@ -1,0 +1,12 @@
+$TTL	1d
+@	IN SOA  cloud.com.  root.cloud.com.(
+		2014010901	; Serial
+		8h		; Refresh
+		4h		; Retry
+		1w		; Expire
+		1d)		; Minimum
+	IN NS	cloud.com.
+	IN MX 1	smtp.cloud.com.
+@	IN A	172.16.1.1
+download	IN A	172.16.1.1
+smtp		IN A	192.168.255.1

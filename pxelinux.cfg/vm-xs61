@@ -1,0 +1,4 @@
+default xenserver
+label xenserver
+  kernel syslinux/mboot.c32 
+  append xs61/xen.gz noreboot com1=115200,8n1 console=com1,vga --- xs61/vmlinuz xencons=hvc console=hvc0 console=tty0 answerfile=http://172.16.1.1/answer/xs61 -answerfile answerfile_device=eth0 install --- xs61/install.img

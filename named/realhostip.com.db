@@ -1,0 +1,10 @@
+$TTL	1d
+@	IN SOA  realhostip.com.  root.realhostip.com.(
+		2013010201	; Serial
+		8h		; Refresh
+		4h		; Retry
+		1w		; Expire
+		1d)		; Minimum
+	IN NS	realhostip.com.
+@	IN A	172.16.1.1
+$GENERATE 1-254		10-100-2-$	A 10.100.2.$

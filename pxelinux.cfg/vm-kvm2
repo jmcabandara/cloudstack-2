@@ -1,0 +1,4 @@
+default kvm2
+label kvm2
+  kernel centos62_64/vmlinuz
+  append load initrd=centos62_64/initrd.img ks=http://172.16.1.1/ks/kvm2 ksdevice=eth0

@@ -1,0 +1,4 @@
+default esx50
+label esx50
+  kernel esxi50/dist/mboot.c32
+  append -c esxi50/boot.cfg

@@ -1,0 +1,4 @@
+default centos
+label centos
+  kernel centos/vmlinuz
+  append load initrd=centos/initrd.img ks=http://172.16.1.1/ks/centos ksdevice=eth0

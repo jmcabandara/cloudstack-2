@@ -1,0 +1,4 @@
+default squeeze
+label squeeze
+  kernel debian-installer/i386/linux
+  append locale=en_US console-keymaps-at/keymap=jp106 hostname=deb6a domain=site-a.local url=http://10.201.0.1/preseed/deb6a initrd=debian-installer/i386/initrd.gz -- quiet 
